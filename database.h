@@ -1142,7 +1142,7 @@ namespace database
         "PalSphere_Robbery",
         "PalSphere_Debug",
     };
-     
+
     static std::map<std::string, std::vector<float>>locationMap = {
     {"Anubis", { -170269, 94163.7, -1527.83 }},
     {"Azurobe", { -300596, 136090, -2033.13 }},
@@ -1165,6 +1165,7 @@ namespace database
     {"Kingpaca", { -336105, 181639, 901.022 }},
     {"Kingpaca Cryst", { 92433, 51564, 17606 }},
     {"Lunaris", { -426589.48, 90677.8, 215.90 }},
+    {"Lyleen Noct", { 31477, 85873, 5448 }},
     {"Mammorest", { -341702, 243628, -533.76 }},
     {"Menasting", { -77943, 393182, 665.51 }},
     {"MossandaLux", { -208233, 364318, 1167.46 }},
