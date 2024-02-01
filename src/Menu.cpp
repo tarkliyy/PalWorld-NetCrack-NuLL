@@ -16,9 +16,9 @@ std::string rand_str(const int len)
     }
     return str;
 }
-void Damage(SDK::APalCharacter* character, int32 damage)
+void Damage(SDK::APalCharacter *character, int32 damage)
 {
-    SDK::FPalDamageInfo  info = SDK::FPalDamageInfo();
+    SDK::FPalDamageInfo info = SDK::FPalDamageInfo();
     info.AttackElementType = SDK::EPalElementType::Normal;
     info.Attacker = Config.GetPalPlayerCharacter();
     info.AttackerGroupID = Config.GetPalPlayerState()->IndividualHandleId.PlayerUId;
@@ -31,7 +31,8 @@ void Damage(SDK::APalCharacter* character, int32 damage)
     Config.GetPalPlayerState()->SendDamage_ToServer(character, info);
 }
 
-int InputTextCallback(ImGuiInputTextCallbackData* data) {
+int InputTextCallback(ImGuiInputTextCallbackData *data)
+{
     char inputChar = data->EventChar;
 
     Config.Update(Config.inputTextBuffer);
@@ -50,8 +51,8 @@ namespace DX11_Base
     {
         void InitStyle()
         {
-            ImGuiStyle& style = ImGui::GetStyle();
-            ImVec4* colors = ImGui::GetStyle().Colors;
+            ImGuiStyle &style = ImGui::GetStyle();
+            ImVec4 *colors = ImGui::GetStyle().Colors;
 
             //	STYLE PROPERTIES
             style.WindowTitleAlign = ImVec2(0.5f, 0.5f);
@@ -120,13 +121,12 @@ namespace DX11_Base
         }
     }
 
-
     namespace Tabs
     {
         void TABPlayer()
         {
 
-            //�л�����һ��
+            // �л�����һ��
             ImGui::Checkbox("Toggle Speed", &Config.IsSpeedHack);
 
             ImGui::Checkbox("Toggle Atk Up", &Config.IsAttackModiler);
@@ -142,31 +142,46 @@ namespace DX11_Base
             if (ImGui::Checkbox("Toggle FullBright", &Config.IsFullbright))
                 SetFullbright(Config.IsFullbright);
 
-            if (ImGui::Button("Spoof Name", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
+            ImGui::InputText("Char Name", Config.CharName, sizeof(Config.CharName));
+            if (ImGui::Button("ChangeName", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 if (Config.GetPalPlayerCharacter() != NULL)
                 {
                     if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
                     {
-                        SDK::UKismetStringLibrary* lib = SDK::UKismetStringLibrary::GetDefaultObj();
-                        std::string s = rand_str(20);
+                        SDK::UKismetStringLibrary *lib = SDK::UKismetStringLibrary::GetDefaultObj();
 
-                        wchar_t  ws[255];
-                        swprintf(ws, 255, L"%hs", s.c_str());
-
+                        wchar_t ws[255];
+                        swprintf(ws, 255, L"%hs", Config.CharName);
                         Config.GetPalPlayerCharacter()->GetPalPlayerController()->Transmitter->NetworkIndividualComponent->UpdateCharacterNickName_ToServer(Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualHandle->ID, SDK::FString(ws));
                     }
                 }
             }
+            // if (ImGui::Button("Spoof Name", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
+            // {
+            //     if (Config.GetPalPlayerCharacter() != NULL)
+            //     {
+            //         if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
+            //         {
+            //             SDK::UKismetStringLibrary* lib = SDK::UKismetStringLibrary::GetDefaultObj();
+            //             std::string s = rand_str(20);
 
-            //Creadit Mokobake
-            //ImGui::Checkbox("MuteKiGodmode", &Config.IsMuteki);
-            //             
+            //             wchar_t  ws[255];
+            //             swprintf(ws, 255, L"%hs", s.c_str());
+
+            //             Config.GetPalPlayerCharacter()->GetPalPlayerController()->Transmitter->NetworkIndividualComponent->UpdateCharacterNickName_ToServer(Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualHandle->ID, SDK::FString(ws));
+            //         }
+            //     }
+            // }
+
+            // Creadit Mokobake
+            // ImGui::Checkbox("MuteKiGodmode", &Config.IsMuteki);
+            //
             ImGui::SliderFloat("Speed Modifier", &Config.SpeedModiflers, 1, 10);
             ImGui::SliderInt("Atk Modifier", &Config.DamageUp, 0, 200000);
             ImGui::SliderInt("Def Modifier", &Config.DefuseUp, 0, 200000);
             ImGui::Text("Player Position");
-            SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
+            SDK::APalPlayerCharacter *p_appc = Config.GetPalPlayerCharacter();
             if (p_appc != NULL)
             {
                 if (Config.GetPalPlayerCharacter()->GetPalPlayerController() != NULL)
@@ -182,11 +197,11 @@ namespace DX11_Base
 
         void TABExploit()
         {
-            //Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->RequestSpawnMonsterForPlayer(name, 5, 1);
+            // Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->RequestSpawnMonsterForPlayer(name, 5, 1);
             ImGui::Checkbox("Show Quick Tab", &Config.IsQuick);
             ImGui::Checkbox("Open Entity List", &Config.bisOpenManager);
             ImGui::InputInt("EXP:", &Config.EXP);
-            //Creadit WoodgamerHD
+            // Creadit WoodgamerHD
             if (ImGui::Button("Give EXP", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
                 GiveExperiencePoints(Config.EXP);
             ImGui::InputInt("Slot to modify (start 0):", &Config.AddItemSlot);
@@ -219,14 +234,13 @@ namespace DX11_Base
             if (ImGui::Button("Revive", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
                 ReviveLocalPlayer();
 
-            //Credit emoisback & Zanzer
+            // Credit emoisback & Zanzer
             if (ImGui::Button("Easy Pal Condensation", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
                 auto easycondense = signature("E8 ?? ?? ?? ?? 89 ?? ?? ?? 00 00 E9 ?? ?? ?? ?? 33").GetPointer();
 
                 BYTE patch[] = {
-                    0x31, 0xC0, 0xFF, 0xC0, 0x90
-                };
+                    0x31, 0xC0, 0xFF, 0xC0, 0x90};
 
                 memory::WriteToMemory(easycondense, patch, 5);
             }
@@ -243,7 +257,8 @@ namespace DX11_Base
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Spacing();
-            if (ImGui::Button("UNHOOK DLL", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) {
+            if (ImGui::Button("UNHOOK DLL", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
+            {
 #if DEBUG
                 g_Console->printdbg("\n\n[+] UNHOOK INITIALIZED [+]\n\n", Console::Colors::red);
 
@@ -252,9 +267,9 @@ namespace DX11_Base
             }
         }
 
-        //void TABDatabase()
+        // void TABDatabase()
         //{
-        //    //ImGui::Checkbox("IsItems", &Config.matchDbItems);
+        //     //ImGui::Checkbox("IsItems", &Config.matchDbItems);
 
         //    ImGui::InputText("Filter", Config.inputTextBuffer, sizeof(Config.inputTextBuffer), ImGuiInputTextFlags_CallbackCharFilter, InputTextCallback);
 
@@ -263,7 +278,7 @@ namespace DX11_Base
         //    const auto& filteredItems = Config.GetFilteredItems();
 
         //    for (const auto& itemName : filteredItems) {
-        //        if (ImGui::Button(itemName.c_str())) 
+        //        if (ImGui::Button(itemName.c_str()))
         //        {
         //                strcpy_s(Config.ItemName, itemName.c_str());
         //                continue;
@@ -284,7 +299,7 @@ namespace DX11_Base
 
                         if (Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState())
                         {
-                            SDK::TArray<SDK::AActor*> T = Config.GetUWorld()->PersistentLevel->Actors;
+                            SDK::TArray<SDK::AActor *> T = Config.GetUWorld()->PersistentLevel->Actors;
                             for (int i = 0; i < T.Count(); i++)
                             {
 
@@ -292,14 +307,13 @@ namespace DX11_Base
                                 {
                                     if (T[i]->IsA(SDK::APalCharacter::StaticClass()))
                                     {
-                                        SDK::APalCharacter* monster = (SDK::APalCharacter*)T[i];
+                                        SDK::APalCharacter *monster = (SDK::APalCharacter *)T[i];
                                         if (monster->IsLocallyControlled() || monster->GetCharacterParameterComponent()->IsOtomo()) // credit emoisback
                                         {
                                             continue;
                                         }
                                         Config.GetPalPlayerState()->SendDeath_ToServer(monster);
                                         Damage(monster, 9999999999999);
-
                                     }
                                 }
                             }
@@ -307,7 +321,7 @@ namespace DX11_Base
                     }
                 }
             }
-            if (ImGui::Button("Crash Server", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))//
+            if (ImGui::Button("Crash Server", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) //
             {
                 if (Config.GetPalPlayerCharacter() != NULL)
                 {
@@ -324,7 +338,7 @@ namespace DX11_Base
             if (ImGui::Button("Unlock All Effigies", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
                 UnlockAllEffigies();
 
-            if (ImGui::Button("Unlock Chests", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) //Credit emoisback
+            if (ImGui::Button("Unlock Chests", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20))) // Credit emoisback
             {
                 UnlockChest();
             }
@@ -353,13 +367,13 @@ namespace DX11_Base
             ImGui::SameLine();
             if (ImGui::Button("TP", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
-                SDK::FVector vector = { Config.Pos[0],Config.Pos[1],Config.Pos[2] };
+                SDK::FVector vector = {Config.Pos[0], Config.Pos[1], Config.Pos[2]};
                 AnyWhereTP(vector, Config.IsSafe);
             }
             ImGui::BeginChild("ScrollingRegion", ImVec2(0, 500), true);
-            for (const auto& pair : database::locationMap)
+            for (const auto &pair : database::locationMap)
             {
-                const std::string& locationName = pair.first;
+                const std::string &locationName = pair.first;
                 if (ImGui::Button(locationName.c_str()))
                 {
                     SDK::FVector location = SDK::FVector(pair.second[0], pair.second[1], pair.second[2]);
@@ -437,7 +451,8 @@ namespace DX11_Base
 
             ImGui::InputText("Search", item_search, IM_ARRAYSIZE(item_search));
             ImGui::BeginChild("ScrollingRegion", ImVec2(0, 500), true);
-            for (const auto& item : list) {
+            for (const auto &item : list)
+            {
                 std::istringstream ss(item);
                 std::string left_text, right_text;
 
@@ -458,8 +473,8 @@ namespace DX11_Base
                 ImGui::PushID(item);
                 if (ImGui::Button(right_text.c_str()))
                 {
-                    SDK::UPalPlayerInventoryData* InventoryData = Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->GetInventoryData();
-                    AddItemToInventoryByName(InventoryData, (char*)left_text.c_str(), num_to_add);
+                    SDK::UPalPlayerInventoryData *InventoryData = Config.GetPalPlayerCharacter()->GetPalPlayerController()->GetPalPlayerState()->GetInventoryData();
+                    AddItemToInventoryByName(InventoryData, (char *)left_text.c_str(), num_to_add);
                 }
                 ImGui::PopID();
             }
@@ -497,10 +512,9 @@ namespace DX11_Base
             //  @TODO: print additional debug information
             if (ImGui::Button("PrintPlayerAddr", ImVec2(ImGui::GetContentRegionAvail().x - 3, 20)))
             {
-                SDK::APalPlayerCharacter* p_appc = Config.GetPalPlayerCharacter();
+                SDK::APalPlayerCharacter *p_appc = Config.GetPalPlayerCharacter();
                 if (p_appc)
                     g_Console->printdbg("\n\n[+] APalPlayerCharacter: 0x%llX\n", Console::Colors::green, p_appc);
-
             }
 
             ImGui::InputTextWithHint("##INPUT", "INPUT GOBJECT fn NAME", inputBuffer_getFnAddr, 100);
@@ -508,11 +522,11 @@ namespace DX11_Base
             if (ImGui::Button("GET fn", ImVec2(ImGui::GetContentRegionAvail().x, 20)))
             {
                 std::string input = inputBuffer_getFnAddr;
-                SDK::UFunction* object = SDK::UObject::FindObject<SDK::UFunction>(input);
+                SDK::UFunction *object = SDK::UObject::FindObject<SDK::UFunction>(input);
                 if (object)
                 {
                     static __int64 dwHandle = reinterpret_cast<__int64>(GetModuleHandle(0));
-                    void* fnAddr = object->ExecFunction;
+                    void *fnAddr = object->ExecFunction;
                     unsigned __int64 fnOffset = (reinterpret_cast<__int64>(fnAddr) - dwHandle);
                     g_Console->printdbg("[+] Found [%s] -> 0x%llX\n", Console::Colors::yellow, input.c_str(), fnOffset);
                 }
@@ -520,22 +534,21 @@ namespace DX11_Base
                     g_Console->printdbg("[!] OBJECT [%s] NOT FOUND!\n", Console::Colors::red, input.c_str());
                 memset(inputBuffer_getFnAddr, 0, 100);
             }
-
         }
     }
-    
-	void Menu::Draw()
-	{
 
-		if (g_GameVariables->m_ShowMenu)
-			MainMenu();
+    void Menu::Draw()
+    {
 
-		if (g_GameVariables->m_ShowHud)
-			HUD(&g_GameVariables->m_ShowHud);
+        if (g_GameVariables->m_ShowMenu)
+            MainMenu();
 
-		if (g_GameVariables->m_ShowDemo)
-			ImGui::ShowDemoWindow();
-	}
+        if (g_GameVariables->m_ShowHud)
+            HUD(&g_GameVariables->m_ShowHud);
+
+        if (g_GameVariables->m_ShowDemo)
+            ImGui::ShowDemoWindow();
+    }
 
     void Menu::Waypoints()
     {
@@ -562,7 +575,7 @@ namespace DX11_Base
         ImVec2 contentSize;
         if (Config.db_waypoints.size() > 0)
         {
-            if (ImGui::BeginChild("##CHILD_WAYPOINTS", { 0.0f, 100.f }))
+            if (ImGui::BeginChild("##CHILD_WAYPOINTS", {0.0f, 100.f}))
             {
                 DWORD index = -1;
                 for (auto waypoint : Config.db_waypoints)
@@ -587,7 +600,6 @@ namespace DX11_Base
         ImGui::SetWindowSize(ImVec2(windowWidth, windowHeight));
 
         ImGui::End();
-
     }
 
     void Menu::EntityList()
@@ -598,13 +610,12 @@ namespace DX11_Base
             return;
         }
 
-        
         if (Config.gWorld)
         {
             ImGui::Checkbox("Player", &Config.filterPlayer);
             ImGui::SameLine();
             ImGui::Checkbox("Pal", &Config.filterPal);
-            SDK::TArray<SDK::AActor*> T = Config.GetUWorld()->PersistentLevel->Actors;
+            SDK::TArray<SDK::AActor *> T = Config.GetUWorld()->PersistentLevel->Actors;
             for (int i = 0; i < T.Count(); i++)
             {
                 if (!T[i])
@@ -613,7 +624,7 @@ namespace DX11_Base
                 if (!T[i]->IsA(SDK::APalCharacter::StaticClass()))
                     continue;
 
-                SDK::APalCharacter* Character = (SDK::APalCharacter*)T[i];
+                SDK::APalCharacter *Character = (SDK::APalCharacter *)T[i];
                 SDK::FString name;
                 if (Character->IsLocallyControlled() || Character->GetCharacterParameterComponent()->IsOtomo())
                 {
@@ -640,23 +651,24 @@ namespace DX11_Base
                 }
                 else
                 {
-                    SDK::UKismetStringLibrary* lib = SDK::UKismetStringLibrary::GetDefaultObj();
+                    SDK::UKismetStringLibrary *lib = SDK::UKismetStringLibrary::GetDefaultObj();
                     if (!Character)
                         continue;
 
                     std::string s = Character->GetFullName();
                     size_t firstUnderscorePos = s.find('_');
 
-                    if (firstUnderscorePos != std::string::npos) 
+                    if (firstUnderscorePos != std::string::npos)
                     {
                         std::string result = s.substr(firstUnderscorePos + 1);
 
                         size_t secondUnderscorePos = result.find('_');
 
-                        if (secondUnderscorePos != std::string::npos) {
+                        if (secondUnderscorePos != std::string::npos)
+                        {
                             result = result.substr(0, secondUnderscorePos);
                         }
-                        wchar_t  ws[255];
+                        wchar_t ws[255];
                         swprintf(ws, 255, L"%hs", result);
                         name = SDK::FString(ws);
                     }
@@ -726,7 +738,7 @@ namespace DX11_Base
                             auto controller = Config.GetPalPlayerCharacter()->GetPalPlayerController();
                             if (controller != NULL)
                             {
-                                auto player = (SDK::APalPlayerCharacter*)Character;
+                                auto player = (SDK::APalPlayerCharacter *)Character;
                                 SDK::FString fakename;
                                 player->CharacterParameterComponent->GetNickname(&fakename);
                                 Config.GetPalPlayerCharacter()->GetPalPlayerController()->Transmitter->NetworkIndividualComponent->UpdateCharacterNickName_ToServer(Config.GetPalPlayerCharacter()->CharacterParameterComponent->IndividualHandle->ID, fakename);
@@ -736,22 +748,22 @@ namespace DX11_Base
                 }
                 ImGui::PopID();
             }
-
         }
 
         if (Config.GetUWorld() != NULL)
         {
         }
-        
+
         ImGui::End();
     }
-	
+
     void Menu::MainMenu()
-	{
+    {
         if (!g_GameVariables->m_ShowDemo)
             Styles::InitStyle();
 
-        if (g_Menu->dbg_RAINBOW_THEME) {
+        if (g_Menu->dbg_RAINBOW_THEME)
+        {
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(g_Menu->dbg_RAINBOW));
             ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(g_Menu->dbg_RAINBOW));
             ImGui::PushStyleColor(ImGuiCol_BorderShadow, ImVec4(g_Menu->dbg_RAINBOW));
@@ -761,13 +773,14 @@ namespace DX11_Base
             ImGui::End();
             return;
         }
-        if (g_Menu->dbg_RAINBOW_THEME) {
+        if (g_Menu->dbg_RAINBOW_THEME)
+        {
             ImGui::PopStyleColor();
             ImGui::PopStyleColor();
             ImGui::PopStyleColor();
         }
-        
-        ImGuiContext* pImGui = GImGui;
+
+        ImGuiContext *pImGui = GImGui;
 
         if (ImGui::BeginTabBar("##tabs", ImGuiTabBarFlags_None))
         {
@@ -781,11 +794,11 @@ namespace DX11_Base
                 Tabs::TABExploit();
                 ImGui::EndTabItem();
             }
-            //if (ImGui::BeginTabItem("Database"))
+            // if (ImGui::BeginTabItem("Database"))
             //{
-            //    Tabs::TABDatabase();
-            //    ImGui::EndTabItem();
-            //}
+            //     Tabs::TABDatabase();
+            //     ImGui::EndTabItem();
+            // }
             if (ImGui::BeginTabItem("Item Spawner"))
             {
                 Tabs::TABItemSpawner();
@@ -828,16 +841,16 @@ namespace DX11_Base
 
         if (Config.bisOpenManager)
             EntityList();
-	}
+    }
 
-	void Menu::HUD(bool* p_open)
-	{
-        
+    void Menu::HUD(bool *p_open)
+    {
+
         ImGui::SetNextWindowPos(g_D3D11Window->pViewport->WorkPos);
         ImGui::SetNextWindowSize(g_D3D11Window->pViewport->WorkSize);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, NULL);
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.00f, 0.00f, 0.00f, 0.00f));
-        if (!ImGui::Begin("##HUDWINDOW", (bool*)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs))
+        if (!ImGui::Begin("##HUDWINDOW", (bool *)true, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs))
         {
             ImGui::PopStyleColor();
             ImGui::PopStyleVar();
@@ -849,11 +862,11 @@ namespace DX11_Base
 
         auto ImDraw = ImGui::GetWindowDrawList();
         auto draw_size = g_D3D11Window->pViewport->WorkSize;
-        auto center = ImVec2({ draw_size.x * .5f, draw_size.y * .5f });
-        auto top_center = ImVec2({ draw_size.x * .5f, draw_size.y * 0.0f });
-        
+        auto center = ImVec2({draw_size.x * .5f, draw_size.y * .5f});
+        auto top_center = ImVec2({draw_size.x * .5f, draw_size.y * 0.0f});
+
         // // Watermark
-        //ImDraw->AddText(top_center, g_Menu->dbg_RAINBOW, "PalWorld-NetCrack");
+        // ImDraw->AddText(top_center, g_Menu->dbg_RAINBOW, "PalWorld-NetCrack");
 
         if (Config.IsESP)
             ESP();
@@ -861,8 +874,8 @@ namespace DX11_Base
         if (Config.isDebugESP)
             ESP_DEBUG(Config.mDebugESPDistance);
 
-        //ImGui::End();
-	}
+        // ImGui::End();
+    }
 
     void Menu::Loops()
     {
@@ -873,24 +886,24 @@ namespace DX11_Base
         //  Revive Player
         if ((GetAsyncKeyState(VK_F6) & 1))
             ReviveLocalPlayer();
-        
+
         //
         if (Config.IsTeleportAllToXhair)
             TeleportAllPalsToCrosshair(Config.mDebugEntCapDistance);
 
-        //  
+        //
         if (Config.IsSpeedHack)
             SpeedHack(Config.SpeedModiflers);
-        
-        //  
+
+        //
         if (Config.IsAttackModiler)
             SetPlayerAttackParam(Config.DamageUp);
 
-        //  
+        //
         if (Config.IsDefuseModiler)
             SetPlayerDefenseParam(Config.DefuseUp);
 
-        //  
+        //
         if (Config.IsInfStamina)
             ResetStamina();
 
@@ -908,7 +921,7 @@ namespace DX11_Base
             SetInfiniteAmmo(false);
         }
 
-        //  
+        //
         //  SetDemiGodMode(Config.IsMuteki);
     }
 }
